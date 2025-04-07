@@ -1,11 +1,14 @@
 import express from 'express'
 import cors from 'cors'
+import { Mongo } from './database/mongo.js'
+import { config } from 'dotenv'
 
+//para pegar os valores do dotenv
+config()
 
 //função principal
 async function main(){
     
-    //o certo é criar um arquivo .env e usar variáveis de ambiente
     //define um endereço que vai rodar a aplicação local
     const hostName = 'localhost'
     //canal de comunicação para o programa se conectar com outros programas ou dispositivos
@@ -13,6 +16,10 @@ async function main(){
 
     //Cria um aplicativo
     const app = express()
+
+    //Conecta ao bando de dados
+    const mongoConnection = await Mongo.connect({mongoConnectionString: process.env.MONGO_CS, mongoDbName: process.env.MONGO_DB_NAME})
+    console.log(mongoConnection)
 
     //servidor entenda requisições que enviam informações no formato JSON
     app.use(express.json())
@@ -29,7 +36,7 @@ async function main(){
     })
 
     app.listen(port, () => {
-        console.log(`Server running on: http://${hostname}:${port}`)
+        console.log(`Server running on: http://${ hostName }:${port}`)
     })
 }
 
