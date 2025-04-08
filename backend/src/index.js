@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { Mongo } from './database/mongo.js'
 import { config } from 'dotenv'
+import authRouter from './auth/auth.js'
 
 //para pegar os valores do dotenv
 config()
@@ -34,6 +35,8 @@ async function main(){
             body: "Welcome to MyGastronomy"
         })
     })
+
+    app.use('/auth', authRouter)
 
     app.listen(port, () => {
         console.log(`Server running on: http://${ hostName }:${port}`)
