@@ -19,7 +19,7 @@ async function main(){
     const app = express()
 
     //Conecta ao bando de dados
-    const mongoConnection = await Mongo.connect({mongoConnectionString: process.env.MONGO_CS, mongoDbName: process.env.MONGO_DB_NAME})
+    const mongoConnection = await Mongo.connect({ mongoConnectionString: process.env.MONGO_CS, mongoDbName: process.env.MONGO_DB_NAME})
     console.log(mongoConnection)
 
     //servidor entenda requisições que enviam informações no formato JSON

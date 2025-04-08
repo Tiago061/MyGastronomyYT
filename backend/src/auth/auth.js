@@ -2,7 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import localStrategy from 'passport-local'
 import crypto from 'crypto'
-import { Mongo } from '../database/mongo,js'
+import { Mongo } from '../database/mongo.js'
 import jwt from 'jsonwebtoken'
 //bota o id unico no recorde salvo
 import  { ObjectId } from 'mongodb'
@@ -60,7 +60,7 @@ authRouter.post('/signup', async (req, res) => {
     }
 
     //chave de encriptacao
-    const salt = crypt.randomBytes(16)
+    const salt = crypto.randomBytes(16)
 
     //funcao de encriptacao
     crypto.pbkdf2(req.body.password, salt, 310000, 16, 'sha256', async (err, hashedPassword) =>{
