@@ -18,12 +18,11 @@ passport.use(new localStrategy({ usernameField: 'email'}, async (email, password
         return callback(null, false)
     }
         //funcao que salva o usuario com a chave de encriptacao e descriptacao
-        const saltBuffer = user.salt.saltBuffer
-    
+        const saltBuffer = user.salt.buffer
         //funcao de encriptacao e descriptacao
-        crypto.pbkdf2(password, saltBuffer, 310000, 16, 'sha256', (err, hashedPassword) => {
-            if(err){
-                return callback(null, false)
+        crypto.pbkdf2(password, saltBuffer, 310000, 16, 'sha256', (error, hashedPassword) => {
+            if(error){
+                return callback(error)
             }
 
             //
@@ -44,6 +43,7 @@ passport.use(new localStrategy({ usernameField: 'email'}, async (email, password
 //rota
 const authRouter = express.Router()
 
+//rota de registrar usuário
 authRouter.post('/signup', async (req, res) => {
     const checkUser = await Mongo.db
     .collection(collectionName)
@@ -103,5 +103,55 @@ authRouter.post('/signup', async (req, res) => {
         }
     })
 })
+
+//rota de logar
+authRouter.post('/login', (req, res, next) => {
+    passport.authenticate('local', async (error, user, info) => {
+        try {
+            // Verificação de erros
+            if (error) {
+                return res.status(500).json({
+                    success: false,
+                    statusCode: 500,
+                    message: 'Error during authentication',
+                    error: error.message // Mostra apenas a mensagem por segurança
+                });
+            }
+
+            // Verifica se o usuário existe
+            if (!user) {
+                return res.status(401).json({ // 401 Unauthorized é mais apropriado
+                    success: false,
+                    statusCode: 401,
+                    message: info.message || 'Authentication failed' // Usa a mensagem do Passport se disponível
+                });
+            }
+
+            // Gera o token JWT
+            const token = jwt.sign(
+                { id: user._id, email: user.email }, // Payload seguro
+                process.env.JWT_SECRET || 'your-secret-key', // Use variáveis de ambiente!
+                { expiresIn: '1h' } // Token expira em 1 hora
+            );
+
+            // Resposta de sucesso
+            return res.status(200).json({
+                success: true,
+                statusCode: 200,
+                message: 'User logged in successfully',
+                user: {
+                    id: user._id,
+                    email: user.email
+                    // Não envie dados sensíveis!
+                },
+                token
+            });
+
+        } catch (err) {
+            next(err); // Passa erros para o middleware de erro
+        }
+    })(req, res, next); // Importante: chama a função retornada
+});
+
 
 export default authRouter;
