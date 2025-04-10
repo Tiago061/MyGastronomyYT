@@ -120,10 +120,10 @@ authRouter.post('/login', (req, res, next) => {
 
             // Verifica se o usuário existe
             if (!user) {
-                return res.status(401).json({ // 401 Unauthorized é mais apropriado
+                return res.status(400).json({ // 401 Unauthorized é mais apropriado
                     success: false,
-                    statusCode: 401,
-                    message: info.message || 'Authentication failed' // Usa a mensagem do Passport se disponível
+                    statusCode: 400,
+                    message:'Authentication failed' // Usa a mensagem do Passport se disponível
                 });
             }
 
