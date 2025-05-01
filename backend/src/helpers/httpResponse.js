@@ -18,7 +18,7 @@ export const notFound = () => {
 export const serverError = (error) => {
     return {
         success: false,
-        statusCode: 400,
+        statusCode: 500,
         body: error
     }
 }
