@@ -15,6 +15,12 @@ ordersRouter.get('/', async(req, res) => {
         res.status(statusCode).json({ success, statusCode, body });
 })
 
+ordersRouter.get('/:id', async(req, res) => {
+    const { success, statusCode, body } = await ordersController.getOrdersByUserId(req.params.id)
+
+    res.status(statusCode).json({ success, statusCode, body });
+})
+
 ordersRouter.post('/', async (req, res) => {
     const { success, statusCode, body } = await ordersController.addOrder(req.body)
 
@@ -22,13 +28,13 @@ ordersRouter.post('/', async (req, res) => {
 })
 
 ordersRouter.delete('/:id', async (req, res) => {
-    const { success, statusCode, body } = await ordersController.deleteOrdersControllers(req.params.id)
+    const { success, statusCode, body } = await ordersController.deleteOrder(req.params.id)
 
     res.status(statusCode).send( { success, statusCode, body })
 })
 
 ordersRouter.put('/:id', async (req, res) => {
-    const { success, statusCode, body } = await ordersController.updateOrdersControllers(req.params.id, req.body)
+    const { success, statusCode, body } = await ordersController.updateOrder(req.params.id, req.body)
     
     res.status(statusCode).send( { success, statusCode, body })
 })
