@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 
+
 export function authService(){
     const [authLoading, setAuthLoading] = useState(false)
 
@@ -19,12 +20,12 @@ export function authService(){
         .then((response) => response.json())
         .then((result) => {
             console.log("Resposta do login:", result);
-            if(result.success && result.token){
+            if(result.success && result.body.token){
                 localStorage.setItem(
                     'auth', 
                     JSON.stringify({ 
-                        token: result.token, 
-                        user: result.user 
+                        token: result.body.token, 
+                        user: result.body.user 
                     }))
             }
         })
@@ -37,7 +38,7 @@ export function authService(){
     }
 
     const logout= () => {
-        
+        localStorage.removeItem('auth')
     }
 
     const signup = (formData) => {
