@@ -6,6 +6,7 @@ import { Mongo } from '../database/mongo.js'
 import jwt from 'jsonwebtoken'
 //bota o id unico no recorde salvo
 import  { ObjectId } from 'mongodb'
+import { text } from 'stream/consumers'
 
 const collectionName = 'users'
 
@@ -78,6 +79,7 @@ authRouter.post('/signup', async (req, res) => {
         const result = await Mongo.db
         .collection(collectionName)
         .insertOne({
+            fullname: req.body.name,
             email: req.body.email,
             password: hashedPassword,
             salt
@@ -95,9 +97,8 @@ authRouter.post('/signup', async (req, res) => {
                 statusCode: 200,
                 body: {
                     text: 'User registered correctly!',
-                    token,
                     user,
-                    logged: true
+                    token
                 } 
             })
         }
@@ -113,38 +114,39 @@ authRouter.post('/login', (req, res, next) => {
                 return res.status(500).json({
                     success: false,
                     statusCode: 500,
-                    message: 'Error during authentication',
-                    error: error.message // Mostra apenas a mensagem por segurança
+                    body: {
+                        text: 'Error during authentication',
+                        error
+                    }
                 });
             }
 
             // Verifica se o usuário existe
             if (!user) {
-                return res.status(400).json({ // 401 Unauthorized é mais apropriado
+                return res.status(400).json({ 
                     success: false,
                     statusCode: 400,
-                    message:'Authentication failed' // Usa a mensagem do Passport se disponível
+                    body:{
+                        text:'Credentials are not correct' 
+                    }
+                    // Usa a mensagem do Passport se disponível
                 });
             }
 
             // Gera o token JWT
-            const token = jwt.sign(
-                { id: user._id, email: user.email }, // Payload seguro
-                process.env.JWT_SECRET || 'your-secret-key', // Use variáveis de ambiente!
-                { expiresIn: '1h' } // Token expira em 1 hora
-            );
+          const token = jwt.sign(user, 'secret')
+          console.log(user)
 
             // Resposta de sucesso
             return res.status(200).json({
                 success: true,
                 statusCode: 200,
-                message: 'User logged in successfully',
-                user: {
-                    id: user._id,
-                    email: user.email
+                body: {
+                    text: 'User logged in successfully',
+                    user,
+                    token
                     // Não envie dados sensíveis!
                 },
-                token
             });
 
         } catch (err) {
