@@ -1,0 +1,20 @@
+.pageContainer{
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.orderContainer{
+    background-color: #004643;
+    color: #faf0ca;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    
+}
+
+.ordersContainer{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5em;
+}
